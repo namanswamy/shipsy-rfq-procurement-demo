@@ -88,16 +88,9 @@ export function StepEmpty({ color = "#ccc" }) {
 
 export function Dropdown({ label, required, value, placeholder, options, open, onToggle, onChange, width, disabled }) {
   const ref = useRef(null);
-  useEffect(() => {
-    const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) onToggle(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [onToggle]);
 
   return (
-    <div ref={ref} style={{ position: "relative", width: width || "100%" }}>
+    <div ref={ref} data-dropdown="true" style={{ position: "relative", width: width || "100%" }}>
       {label && (
         <div style={{ marginBottom: 5 }}>
           <span style={{ fontSize: 13, fontWeight: 500, color: C.label }}>{label}</span>
@@ -105,7 +98,7 @@ export function Dropdown({ label, required, value, placeholder, options, open, o
         </div>
       )}
       <div
-        onClick={() => !disabled && onToggle(!open)}
+        onMouseDown={(e) => { e.stopPropagation(); if (!disabled) onToggle(!open); }}
         style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
           height: 38, padding: "0 12px", borderRadius: 6,
@@ -132,6 +125,7 @@ export function Dropdown({ label, required, value, placeholder, options, open, o
           {options.map((opt) => (
             <div
               key={opt}
+              onMouseDown={(e) => e.stopPropagation()}
               onClick={() => { onChange(opt); onToggle(false); }}
               onMouseEnter={(e) => { if (value !== opt) e.currentTarget.style.background = "#f7f9fc"; }}
               onMouseLeave={(e) => { if (value !== opt) e.currentTarget.style.background = "transparent"; }}
@@ -155,13 +149,6 @@ export function Dropdown({ label, required, value, placeholder, options, open, o
 
 export function MultiSelectDropdown({ label, required, values = [], placeholder, options, open, onToggle, onChange, width }) {
   const ref = useRef(null);
-  useEffect(() => {
-    const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) onToggle(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [onToggle]);
 
   const toggle = (opt) => {
     if (values.includes(opt)) onChange(values.filter((v) => v !== opt));
@@ -169,7 +156,7 @@ export function MultiSelectDropdown({ label, required, values = [], placeholder,
   };
 
   return (
-    <div ref={ref} style={{ position: "relative", width: width || "100%" }}>
+    <div ref={ref} data-dropdown="true" style={{ position: "relative", width: width || "100%" }}>
       {label && (
         <div style={{ marginBottom: 5 }}>
           <span style={{ fontSize: 13, fontWeight: 500, color: C.label }}>{label}</span>
@@ -177,7 +164,7 @@ export function MultiSelectDropdown({ label, required, values = [], placeholder,
         </div>
       )}
       <div
-        onClick={() => onToggle(!open)}
+        onMouseDown={(e) => { e.stopPropagation(); onToggle(!open); }}
         style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
           minHeight: 38, padding: "4px 12px", borderRadius: 6,

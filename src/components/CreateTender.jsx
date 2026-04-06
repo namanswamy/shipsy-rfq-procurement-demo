@@ -9,6 +9,23 @@ import {
   Dropdown, TextInput, CalendarIcon, CloseIcon, UploadIcon,
 } from "./Common";
 
+/* Toggle switch — defined outside to avoid remount on every render */
+function Toggle({ value, onChange }) {
+  return (
+    <div onClick={() => onChange(!value)} style={{
+      width: 36, height: 20, borderRadius: 10, cursor: "pointer",
+      background: value ? "#1890FF" : "#d9d9d9", transition: "background 0.2s",
+      display: "flex", alignItems: "center", padding: 2, flexShrink: 0,
+    }}>
+      <div style={{
+        width: 16, height: 16, borderRadius: 8, background: "#fff",
+        transition: "transform 0.2s", transform: value ? "translateX(16px)" : "translateX(0)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+      }} />
+    </div>
+  );
+}
+
 export default function CreateTender({ onClose, onSubmit }) {
   const [dd, setDd] = useState({});
   const [form, setForm] = useState({});
@@ -16,7 +33,16 @@ export default function CreateTender({ onClose, onSubmit }) {
   const [tncRows, setTncRows] = useState([]);
   const [tncOpen, setTncOpen] = useState(false);
 
-  const tog = useCallback((key) => (val) => setDd((p) => ({ ...p, [key]: val })), []);
+  // When opening a dropdown, close all others. When closing, just close that one.
+  const tog = useCallback((key) => (val) => {
+    if (val) {
+      // Opening: set only this key to true, all others false
+      setDd({ [key]: true });
+    } else {
+      // Closing: just close this one
+      setDd((p) => ({ ...p, [key]: false }));
+    }
+  }, []);
 
   const set = (key) => (val) => {
     setForm((p) => {
@@ -65,20 +91,6 @@ export default function CreateTender({ onClose, onSubmit }) {
   const removeTncRow = (id) => setTncRows((p) => p.filter((r) => r.id !== id));
   const updateTnc = (id, field, val) => setTncRows((p) => p.map((r) => r.id === id ? { ...r, [field]: val } : r));
 
-  /* ─── Toggle switch component ─── */
-  const Toggle = ({ value, onChange }) => (
-    <div onClick={() => onChange(!value)} style={{
-      width: 36, height: 20, borderRadius: 10, cursor: "pointer",
-      background: value ? "#1890FF" : "#d9d9d9", transition: "background 0.2s",
-      display: "flex", alignItems: "center", padding: 2, flexShrink: 0,
-    }}>
-      <div style={{
-        width: 16, height: 16, borderRadius: 8, background: "#fff",
-        transition: "transform 0.2s", transform: value ? "translateX(16px)" : "translateX(0)",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-      }} />
-    </div>
-  );
 
   return (
     <>
@@ -110,8 +122,9 @@ export default function CreateTender({ onClose, onSubmit }) {
           }}>Submit</button>
         </div>
 
-        {/* Scrollable body */}
-        <div style={{ flex: 1, overflow: "auto", padding: 24 }}>
+        {/* Scrollable body — close all dropdowns when clicking outside any dropdown */}
+        <div onMouseDown={(e) => { if (!e.target.closest('[data-dropdown]')) setDd({}); }}
+          style={{ flex: 1, overflow: "auto", padding: 24 }}>
 
           {/* ── Row 1: Vendor Type | Mode ── */}
           <div style={{ display: "grid", gridTemplateColumns: vendorType && modeOptions ? "1fr 1fr" : "1fr", gap: 18, marginBottom: 22 }}>
@@ -240,12 +253,16 @@ export default function CreateTender({ onClose, onSubmit }) {
                     )}
                   </div>
                 ))}
-                <div onClick={addDocRow} style={{ marginTop: 4, color: "#1890FF", fontSize: 13, cursor: "pointer", fontWeight: 500 }}>+ Add More</div>
+                <div style={{ marginTop: 4 }}><span onClick={addDocRow} style={{ color: "#1890FF", fontSize: 13, cursor: "pointer", fontWeight: 500 }}>+ Add More</span></div>
               </div>
 
               {/* ─── Terms & Conditions ─── */}
               <div style={{ borderTop: `1px solid ${C.border}` }}>
-                <div onClick={() => setTncOpen(!tncOpen)} style={{
+                <div onClick={() => {
+                  const opening = !tncOpen;
+                  setTncOpen(opening);
+                  if (opening && tncRows.length === 0) addTncRow();
+                }} style={{
                   padding: "14px 0", display: "flex", alignItems: "center", gap: 8, cursor: "pointer",
                 }}>
                   <svg width="12" height="12" viewBox="0 0 12 12" stroke="#555" strokeWidth="1.5" fill="none"
@@ -260,14 +277,14 @@ export default function CreateTender({ onClose, onSubmit }) {
                     {/* T&C Header */}
                     {tncRows.length > 0 && (
                       <div style={{
-                        display: "grid", gridTemplateColumns: "36px 1fr 70px 70px 36px 36px",
+                        display: "grid", gridTemplateColumns: "36px 1fr 70px 70px 60px 28px",
                         gap: 8, padding: "8px 0", borderBottom: `1px solid ${C.border}`, marginBottom: 8,
                       }}>
                         <span style={{ fontSize: 12, color: C.textMuted, fontWeight: 500 }}>S.N.</span>
                         <span style={{ fontSize: 12, color: C.textMuted, fontWeight: 500 }}>Terms & Conditions</span>
                         <span style={{ fontSize: 12, color: C.textMuted, fontWeight: 500, textAlign: "center" }}>Mandatory</span>
                         <span style={{ fontSize: 12, color: C.textMuted, fontWeight: 500, textAlign: "center" }}>Remarks</span>
-                        <span></span>
+                        <span style={{ fontSize: 12, color: C.textMuted, fontWeight: 500, textAlign: "center" }}>Doc</span>
                         <span></span>
                       </div>
                     )}
@@ -275,7 +292,7 @@ export default function CreateTender({ onClose, onSubmit }) {
                     {/* T&C Rows */}
                     {tncRows.map((row, idx) => (
                       <div key={row.id} style={{
-                        display: "grid", gridTemplateColumns: "36px 1fr 70px 70px 36px 36px",
+                        display: "grid", gridTemplateColumns: "36px 1fr 70px 70px 60px 28px",
                         gap: 8, alignItems: "center", marginBottom: 10,
                         padding: "10px 0", background: "#fafaf5", borderRadius: 4,
                       }}>
@@ -294,8 +311,18 @@ export default function CreateTender({ onClose, onSubmit }) {
                           <Toggle value={row.remarks} onChange={(v) => updateTnc(row.id, "remarks", v)} />
                         </div>
                         {/* Upload per row */}
-                        <div style={{ display: "flex", justifyContent: "center", cursor: "pointer" }}>
-                          <UploadIcon />
+                        <div style={{
+                          display: "flex", justifyContent: "center", alignItems: "center",
+                          cursor: "pointer", gap: 4,
+                        }}>
+                          <button style={{
+                            display: "flex", alignItems: "center", gap: 4,
+                            padding: "4px 10px", borderRadius: 4,
+                            border: "1px solid #d9d9d9", background: C.white,
+                            fontSize: 11, color: "#1890FF", cursor: "pointer", whiteSpace: "nowrap",
+                          }}>
+                            <UploadIcon /> Doc
+                          </button>
                         </div>
                         {/* Delete */}
                         <div onClick={() => removeTncRow(row.id)} style={{
@@ -310,7 +337,7 @@ export default function CreateTender({ onClose, onSubmit }) {
                       </div>
                     ))}
 
-                    <div onClick={addTncRow} style={{ color: "#1890FF", fontSize: 13, cursor: "pointer", fontWeight: 500, marginTop: 4 }}>+ Add More</div>
+                    <div style={{ marginTop: 4 }}><span onClick={addTncRow} style={{ color: "#1890FF", fontSize: 13, cursor: "pointer", fontWeight: 500 }}>+ Add More</span></div>
                   </div>
                 )}
               </div>
