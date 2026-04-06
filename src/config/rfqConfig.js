@@ -429,6 +429,53 @@ export const DOCUMENT_CATEGORIES = [
   "TNC",
 ];
 
+/* ─── Port data for View Line Items ─── */
+export const PORT_DATA = {
+  INMUN: { name: "Nhava Sheva", country: "INDIA", cc: "IN" },
+  INNSA: { name: "Nhava Sheva", country: "INDIA", cc: "IN" },
+  INPAV: { name: "Pipavav", country: "INDIA", cc: "IN" },
+  INCHN: { name: "Chennai", country: "INDIA", cc: "IN" },
+  INDEL: { name: "ICD Delhi", country: "INDIA", cc: "IN" },
+  INKTP: { name: "Krishnapatnam", country: "INDIA", cc: "IN" },
+  INHZA: { name: "Hazira", country: "INDIA", cc: "IN" },
+  INVTZ: { name: "Visakhapatnam", country: "INDIA", cc: "IN" },
+  CNSHA: { name: "Shanghai", country: "CHINA", cc: "CN" },
+  CNNGB: { name: "Ningbo", country: "CHINA", cc: "CN" },
+  SGSIN: { name: "Singapore", country: "SINGAPORE", cc: "SG" },
+  AEJEA: { name: "Jebel Ali", country: "UAE", cc: "AE" },
+  USLAX: { name: "Los Angeles", country: "USA", cc: "US" },
+  GBFXT: { name: "Felixstowe", country: "UK", cc: "GB" },
+  DEHAM: { name: "Hamburg", country: "GERMANY", cc: "DE" },
+};
+
+/* Charge columns per vendor type */
+export const CHARGE_COLUMNS = {
+  "Freight Forwarder": {
+    Import: ["Non Haz Destination", "Haz Destination", "S/L Maintenance", "Inland Haulage", "Non Haz Doc Charges", "Rail Transport", "CFS Charges"],
+    Export: ["Seal Charges (INR)", "Load Port Non Haz", "Toll Charges (INR)", "Lolo Charges (INR)", "MUC Charges (INR)", "Non Haz Doc Ch", "Rail Transport"],
+  },
+  "Shipping Line": {
+    Import: ["Non Haz Destination", "Haz Destination", "S/L Maintenance", "Inland Haulage", "Non Haz Doc Charges", "Rail Transport", "CFS Charges"],
+    Export: ["Seal Charges (INR)", "Load Port Non Haz", "Toll Charges (INR)", "Lolo Charges (INR)", "MUC Charges (INR)", "Non Haz Doc Ch", "Rail Transport"],
+  },
+  CHA: ["CHA Charges", "Documentation", "Examination", "Transport", "Miscellaneous"],
+  CFS: ["CFS Handling", "Storage Charges", "Transport", "Documentation", "Miscellaneous"],
+  ICD: ["ICD Handling", "Rail Freight", "Documentation", "Storage", "Miscellaneous"],
+  "Break Bulk Vendor": ["Ocean Freight", "BAF", "Port Charges", "THC", "Documentation", "Miscellaneous"],
+  Surveyor: ["Origin Survey", "Dest Survey", "Overtime Charges", "Misc Charges", "Documentation"],
+};
+
+/* Vendor names per type for demo display */
+export const VENDOR_NAMES = {
+  "Freight Forwarder": ["DHL Global Forwarding", "Kuehne + Nagel", "DB Schenker", "Expeditors", "C.H. Robinson"],
+  "Shipping Line": ["Maersk Line India", "COSCO Shipping Lines", "Gold Star Line", "MSC Mediterranean", "Hapag-Lloyd AG"],
+  CHA: ["ABC Customs Brokers", "Global CHA Services", "Quick Clear Customs"],
+  CFS: ["Allcargo CFS", "Container Corp", "JWC Logistics", "Balmer Lawrie CFS"],
+  ICD: ["Concor ICD", "Hind Terminal", "Continental Carriers"],
+  "Break Bulk Vendor": ["Rickmers Line", "BBC Chartering", "AAL Shipping", "SAL Heavy Lift"],
+  Surveyor: ["SGS India Pvt Ltd", "Bureau Veritas", "Intertek Testing", "Control Union"],
+};
+
 /* Vendor type short codes for chips */
 export const VENDOR_CHIP = {
   "Freight Forwarder": "FF",

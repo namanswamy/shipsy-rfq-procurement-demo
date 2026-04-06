@@ -42,6 +42,15 @@ const SEED_ROWS = [
 
   { id: 204, name: "BB-PROJECT-ALPHA-2026", vendorType: "Break Bulk Vendor", type: "Export", tags: "ALL \u2022 Export", chip: "BB", period: "Custom", dates: "Jun 1, 2026 - Dec 31, 2026", status: "ON TIME", round: "-", items: 2, response: "-", amend: "-", stepper: "line_items", stepItems: 2, lineItems: [{ id: 1, pol: "INMUN", pod: "USLAX", materialPONo: "PO-2026-001", cargoType: "General" }, { id: 2, pol: "INMUN", pod: "GBFXT", materialPONo: "PO-2026-002", cargoType: "Hazardous" }], rfqName: "BB-PROJECT-ALPHA-2026" },
 
+  // ── CFS (line items added — click "View Line Items") ──
+  { id: 205, name: "CFS-IMPORT-WEST-COAST-2026", vendorType: "CFS", type: "Import", segment: "DPD-CFS", tags: "ALL \u2022 Import", chip: "CFS", period: "Custom", dates: "Apr 1, 2026 - Aug 31, 2026", status: "ON TIME", round: "-", items: 3, response: "-", amend: "-", stepper: "line_items", stepItems: 3, lineItems: [{ id: 1, pod: "INMUN" }, { id: 2, pod: "INNSA" }, { id: 3, pod: "INPAV" }], rfqName: "CFS-IMPORT-WEST-COAST-2026" },
+
+  // ── ICD (line items added — click "View Line Items") ──
+  { id: 206, name: "ICD-IMPORT-NORTH-2026", vendorType: "ICD", type: "Import", tags: "ALL \u2022 Import", chip: "ICD", period: "Custom", dates: "May 1, 2026 - Sep 30, 2026", status: "ON TIME", round: "-", items: 2, response: "-", amend: "-", stepper: "line_items", stepItems: 2, lineItems: [{ id: 1, pod: "INDEL" }, { id: 2, pod: "INKTP" }], rfqName: "ICD-IMPORT-NORTH-2026" },
+
+  // ── Surveyor (line items added — click "View Line Items") ──
+  { id: 207, name: "SURVEYOR-MARINE-WARRANTY-2026", vendorType: "Surveyor", type: "Export", subType: "Marine Warranty", tags: "ALL \u2022 Export \u2022 Marine Warranty", chip: "SUR", period: "Custom", dates: "Jun 1, 2026 - Nov 30, 2026", status: "ON TIME", round: "-", items: 4, response: "-", amend: "-", stepper: "line_items", stepItems: 4, lineItems: [{ id: 1, pol: "INMUN", pod: "CNSHA", projectName: "Project Alpha" }, { id: 2, pol: "INMUN", pod: "SGSIN", projectName: "Project Alpha" }, { id: 3, pol: "INNSA", pod: "CNSHA", projectName: "Project Alpha" }, { id: 4, pol: "INNSA", pod: "SGSIN", projectName: "Project Alpha" }], rfqName: "SURVEYOR-MARINE-WARRANTY-2026" },
+
   // ── Original screenshot rows ──
   { id: 1, name: "SAP FINAL FM-FCL IMPORT FF REGION TEST-...", vendorType: "Freight Forwarder", mode: "FCL", type: "Import", subType: "Freight Management", tags: "FCL \u2022 Import \u2022 Freight Management", period: "Custom", dates: "Apr 1, 2026 - Jun 30, 2027", status: "LIVE", round: "1", roundDate: "Apr 30, 2026", items: 1, response: "2/2", amend: "-", progress: 0.7, pColor: C.progressBlue, updates: "4 New Updates", lineItems: [{ id: 1, pol: "INMUN", pod: "CNSHA", containerSize: "40' GP", incoterm: "FOB" }], rfqName: "SAP FINAL FM-FCL" },
 
@@ -51,8 +60,8 @@ const SEED_ROWS = [
 ];
 
 const TABS = [
-  { label: "All", count: 143 }, { label: "Live", count: 8 }, { label: "On Time", count: 51 },
-  { label: "Finalised", count: 0 }, { label: "Open", count: 2 }, { label: "Closed", count: 82 },
+  { label: "All", count: 308 }, { label: "Live", count: 10 }, { label: "Delayed", count: 36 },
+  { label: "Finalised", count: 11 }, { label: "Open", count: 10 }, { label: "Closed", count: 241 },
 ];
 
 const MODE_CHIPS = ["FCL", "LCL", "AIR", "BB", "ALL"];
@@ -60,7 +69,7 @@ const MODE_CHIPS = ["FCL", "LCL", "AIR", "BB", "ALL"];
 export default function App() {
   const [rows, setRows] = useState(SEED_ROWS);
   const [activeTab, setActiveTab] = useState("All");
-  const [activeMode, setActiveMode] = useState("FCL");
+  const [activeMode, setActiveMode] = useState(null);
 
   // Panels
   const [showCreate, setShowCreate] = useState(false);
@@ -153,7 +162,7 @@ export default function App() {
   };
 
   return (
-    <div style={{ fontFamily: "'Open Sans', sans-serif", background: "#f4f5f7", minHeight: "100vh" }}>
+    <div style={{ fontFamily: "'Open Sans', sans-serif", background: C.bgPage, minHeight: "100vh" }}>
       <style>{`
         @keyframes fadeSlideIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
         @keyframes slideIn     { from { transform:translateX(100%); }           to { transform:translateX(0); } }
@@ -161,12 +170,23 @@ export default function App() {
         * { box-sizing: border-box; }
       `}</style>
 
-      {/* ───── TOP BAR: Row 1 (title + date | bell + avatar) ───── */}
+      {/* ═══ Full-screen View Line Items (replaces listing) ═══ */}
+      {viewItemsTarget && targetRow(viewItemsTarget) ? (
+        <ViewLineItems
+          tender={targetRow(viewItemsTarget)}
+          lineItems={targetRow(viewItemsTarget).lineItems || []}
+          onClose={() => setViewItemsTarget(null)}
+          onSendRfq={() => setSendRfqTarget(viewItemsTarget)}
+          onAddLineItem={() => setLineItemTarget(viewItemsTarget)}
+        />
+      ) : (
+      <>
+      {/* ───── TOP BAR ───── */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px", background: C.white, borderBottom: `1px solid ${C.border}` }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <GridIcon />
-          <span style={{ fontSize: 16, fontWeight: 700, color: C.text }}>Manage RFQ</span>
-          <span style={{ fontSize: 12, color: C.textMuted, whiteSpace: "nowrap" }}>Plan Creation Period</span>
+          <span style={{ fontSize: 20, fontWeight: 500, color: C.text }}>Manage RFQ</span>
+          <span style={{ fontSize: 10, color: C.textSec, fontWeight: 100, whiteSpace: "nowrap" }}>Plan Creation Period</span>
           <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "4px 12px", borderRadius: 20, border: `1px solid ${C.border}`, fontSize: 13, color: C.text }}>
             <span style={{ fontWeight: 400 }}>02/04/2025</span>
             <span style={{ color: C.textMuted }}>~</span>
@@ -177,7 +197,7 @@ export default function App() {
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           {/* Bell with 99+ */}
           <div style={{ position: "relative", cursor: "pointer" }}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="rgba(0,0,0,0.65)" strokeWidth="1.4"><path d="M10 2.5a4.5 4.5 0 00-4.5 4.5v3L4 12h12l-1.5-2V7A4.5 4.5 0 0010 2.5z"/><path d="M8.5 14a1.5 1.5 0 003 0"/></svg>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke={C.textLight} strokeWidth="1.4"><path d="M10 2.5a4.5 4.5 0 00-4.5 4.5v3L4 12h12l-1.5-2V7A4.5 4.5 0 0010 2.5z"/><path d="M8.5 14a1.5 1.5 0 003 0"/></svg>
             <span style={{ position: "absolute", top: -6, right: -10, background: "#f5222d", color: "#fff", fontSize: 8, fontWeight: 700, padding: "1px 4px", borderRadius: 8, lineHeight: "13px", minWidth: 18, textAlign: "center" }}>99+</span>
           </div>
           {/* Avatar */}
@@ -185,141 +205,149 @@ export default function App() {
             <div style={{ width: 28, height: 28, borderRadius: 14, background: "#7c4dff", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <span style={{ color: "#fff", fontSize: 11, fontWeight: 600 }}>P</span>
             </div>
-            <svg width="10" height="10" viewBox="0 0 10 10"><polyline points="3,4 5,6 7,4" fill="none" stroke="rgba(0,0,0,0.45)" strokeWidth="1.2"/></svg>
+            <svg width="10" height="10" viewBox="0 0 10 10"><polyline points="3,4 5,6 7,4" fill="none" stroke={C.textMuted} strokeWidth="1.2"/></svg>
           </div>
         </div>
       </div>
 
       {/* ───── ROW 2: Mode | Type | Sort By | More Filters ... Search Download Analytics Create ───── */}
-      <div style={{ display: "flex", alignItems: "center", padding: "8px 16px", background: C.white, borderBottom: `1px solid ${C.border}` }}>
+      {/* ───── TOOLBAR ───── */}
+      <div style={{ display: "flex", alignItems: "center", padding: "8px 16px", background: C.white, marginBottom: 6 }}>
         {/* Mode label + chips */}
-        <span style={{ fontSize: 13, color: C.textMuted, fontWeight: 400, marginRight: 10 }}>Mode</span>
+        <span style={{ fontSize: 11, color: C.textMuted, fontWeight: 400, marginRight: 8 }}>Mode</span>
         {MODE_CHIPS.map((m) => (
           <span key={m} onClick={() => setActiveMode(m)} style={{
-            padding: "4px 12px", borderRadius: 14, fontSize: 12, fontWeight: 500,
-            border: `1px solid ${activeMode === m ? C.primary : "#d9d9d9"}`,
+            padding: "3px 10px", borderRadius: 14, fontSize: 11, fontWeight: 500,
+            border: `1px solid ${activeMode === m ? C.primary : C.borderMed}`,
             background: activeMode === m ? "#e6f7ff" : C.white,
-            color: activeMode === m ? C.primary : "rgba(0,0,0,0.65)", cursor: "pointer",
-            display: "inline-flex", alignItems: "center", height: 30, marginRight: 6,
+            color: activeMode === m ? C.primary : C.textMed, cursor: "pointer",
+            display: "inline-flex", alignItems: "center", height: 28, marginRight: 5,
           }}>{modeIcon(m)}{m}</span>
         ))}
 
-        {/* Vertical separator */}
-        <div style={{ width: 1, height: 22, background: "#d9d9d9", margin: "0 12px" }} />
+        {/* Type chips: only show when a mode is selected */}
+        {activeMode && (
+          <>
+            <div style={{ width: 1, height: 20, background: C.borderMed, margin: "0 10px" }} />
+            <span style={{ fontSize: 11, color: C.textMuted, fontWeight: 400, marginRight: 8 }}>Type</span>
+            {["Export", "Import", "Charges"].map((t) => (
+              <span key={t} style={{
+                padding: "3px 10px", borderRadius: 14, fontSize: 11, fontWeight: 500,
+                border: `1px solid ${C.borderMed}`, background: C.white,
+                color: C.textMed, cursor: "pointer",
+                display: "inline-flex", alignItems: "center", height: 28, marginRight: 5,
+              }}>{t}</span>
+            ))}
+          </>
+        )}
 
-        {/* Type chips: Export, Import, Charges */}
-        <span style={{ fontSize: 13, color: C.textMuted, fontWeight: 400, marginRight: 10 }}>Type</span>
-        {["Export", "Import", "Charges"].map((t) => (
-          <span key={t} style={{
-            padding: "4px 12px", borderRadius: 14, fontSize: 12, fontWeight: 500,
-            border: "1px solid #d9d9d9", background: C.white,
-            color: "rgba(0,0,0,0.65)", cursor: "pointer",
-            display: "inline-flex", alignItems: "center", height: 30, marginRight: 6,
-          }}>{t}</span>
-        ))}
-
         {/* Vertical separator */}
-        <div style={{ width: 1, height: 22, background: "#d9d9d9", margin: "0 12px" }} />
+        <div style={{ width: 1, height: 20, background: C.borderMed, margin: "0 10px" }} />
 
         {/* Sort By */}
-        <span style={{ fontSize: 13, color: C.textMuted, fontWeight: 400, marginRight: 8 }}>Sort By</span>
+        <span style={{ fontSize: 11, color: C.textMuted, fontWeight: 400, marginRight: 6 }}>Sort By</span>
         <div style={{
-          display: "inline-flex ", alignItems: "center", justifyContent: "space-between",
-          padding: "0 11px", borderRadius: 4, border: "1px solid #d9d9d9",
-          fontSize: 13, color: "rgba(0,0,0,0.25)", cursor: "pointer", height: 30, minWidth: 110,
+          display: "inline-flex", alignItems: "center", justifyContent: "space-between",
+          padding: "0 12px", borderRadius: 16, border: `1px solid ${C.borderMed}`,
+          fontSize: 12, color: C.placeholder, cursor: "pointer", height: 28, minWidth: 100,
         }}>
           <span>Select</span>
-          <svg width="10" height="10" viewBox="0 0 10 10"><polyline points="3,4 5,6 7,4" fill="none" stroke="rgba(0,0,0,0.25)" strokeWidth="1.5"/></svg>
+          <svg width="10" height="10" viewBox="0 0 10 10"><polyline points="3,4 5,6 7,4" fill="none" stroke={C.textMuted} strokeWidth="1.5"/></svg>
         </div>
 
         {/* Funnel icon + More Filters */}
-        <span style={{ fontSize: 13, color: "rgba(0,0,0,0.65)", cursor: "pointer", display: "flex", alignItems: "center", gap: 5, marginLeft: 16, fontWeight: 500 }}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="rgba(0,0,0,0.45)" strokeWidth="1.3"><path d="M1.5 2.5h11L8.5 7v4l-3 1.5V7L1.5 2.5z"/></svg>
+        <span style={{ fontSize: 11, color: C.text, cursor: "pointer", display: "flex", alignItems: "center", gap: 4, marginLeft: 14, fontWeight: 500 }}>
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke={C.textMuted} strokeWidth="1.3"><path d="M1.5 2.5h11L8.5 7v4l-3 1.5V7L1.5 2.5z"/></svg>
           More Filters
         </span>
+        <span style={{ fontSize: 11, color: C.red, cursor: "pointer", marginLeft: 8, fontWeight: 400 }}>Reset</span>
 
         {/* Right side: Search + Download + Analytics + Create */}
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ cursor: "pointer" }}><SearchIcon /></div>
           <div style={{ cursor: "pointer" }}>
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="rgba(0,0,0,0.45)" strokeWidth="1.5"><line x1="9" y1="3" x2="9" y2="12"/><polyline points="5,9 9,13 13,9"/><line x1="3" y1="16" x2="15" y2="16"/></svg>
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke={C.textMuted} strokeWidth="1.5"><line x1="9" y1="3" x2="9" y2="12"/><polyline points="5,9 9,13 13,9"/><line x1="3" y1="16" x2="15" y2="16"/></svg>
           </div>
-          <button style={{ padding: "0 15px", borderRadius: 4, border: "1px solid #d9d9d9", background: C.white, fontSize: 14, fontWeight: 400, color: "rgba(0,0,0,0.65)", cursor: "pointer", height: 32, lineHeight: "30px" }}>Analytics</button>
-          <button onClick={() => setShowCreate(true)} style={{ padding: "0 15px", borderRadius: 4, border: "1px solid #1890FF", background: "#1890FF", color: C.white, fontSize: 14, fontWeight: 400, cursor: "pointer", height: 32, lineHeight: "30px", boxShadow: "0 2px 0 rgba(0,0,0,0.045)" }}>Create RFQ Plan</button>
+          <button style={{ padding: "0 14px", borderRadius: 4, border: "1px solid #333", background: C.white, fontSize: 13, fontWeight: 400, color: C.text, cursor: "pointer", height: 30, lineHeight: "28px" }}>Analytics</button>
+          <button onClick={() => setShowCreate(true)} style={{ padding: "0 14px", borderRadius: 4, border: "1px solid #096dd9", background: "#096dd9", color: C.white, fontSize: 13, fontWeight: 400, cursor: "pointer", height: 30, lineHeight: "28px" }}>Create RFQ Plan</button>
         </div>
       </div>
 
-      {/* ───── Dashboard content container ───── */}
-      <div style={{ padding: "12px 16px 0", background: C.white }}>
+      {/* ───── Dashboard content ───── */}
+      <div style={{ padding: "0 16px" }}>
 
-        {/* ── Tabs + Pagination row ── */}
-        <div style={{ display: "flex", alignItems: "center", marginBottom: 0 }}>
-          <div style={{ display: "flex", alignItems: "stretch", border: "1px solid #d9d9d9", height: 34 }}>
-            {TABS.map((t, i) => (
-              <div key={t.label} onClick={() => setActiveTab(t.label)} style={{
-                padding: "0 14px", cursor: "pointer",
-                borderBottom: activeTab === t.label ? "2px solid #1890FF" : "2px solid transparent",
-                borderRight: i < TABS.length - 1 ? "1px solid #d9d9d9" : "none",
-                marginRight: i < TABS.length - 1 ? -1 : 0,
-                color: activeTab === t.label ? "#1890FF" : "rgba(0,0,0,0.65)",
-                fontSize: 14, fontWeight: 400,
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                minWidth: 95, whiteSpace: "nowrap", background: C.white,
-              }}>
-                <span>{t.label}</span>
-                <div style={{ marginLeft: 10, fontWeight: 700, color: activeTab === t.label ? "#1890FF" : "rgba(0,0,0,0.85)" }}>{t.count}</div>
-              </div>
-            ))}
+        {/* ── Layer 1: Tabs + Pagination (separate white card) ── */}
+        {/* ── Tabs + Pagination ── */}
+        <div style={{ display: "flex", alignItems: "center", marginBottom: 6, padding: "0" }}>
+          <div style={{ display: "grid", gridTemplateColumns: `repeat(${TABS.length}, 130px)`, height: 34 }}>
+            {TABS.map((t, i) => {
+              const isActive = activeTab === t.label;
+              return (
+                <div key={t.label} onClick={() => setActiveTab(t.label)} style={{
+                  cursor: "pointer",
+                  border: `1px solid ${C.border}`,
+                  borderRight: i < TABS.length - 1 ? "none" : `1px solid ${C.border}`,
+                  borderBottom: isActive ? "3px solid #1890FF" : "3px solid transparent",
+                  background: C.white,
+                  color: isActive ? C.text : C.textLight,
+                  fontSize: 14, fontWeight: 400,
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "0 14px",
+                }}>
+                  <span>{t.label}</span>
+                  <span style={{ fontWeight: 700, color: isActive ? C.text : C.textLight }}>{t.count}</span>
+                </div>
+              );
+            })}
           </div>
           <div style={{ flex: 1 }} />
-          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: "rgba(0,0,0,0.45)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, color: C.textMuted }}>
             <span style={{ cursor: "pointer", userSelect: "none" }}>K</span>
             <span style={{ cursor: "pointer", userSelect: "none" }}>&lt;</span>
-            <span style={{ fontWeight: 600, color: "rgba(0,0,0,0.85)", margin: "0 2px" }}>1</span>
+            <span style={{ fontWeight: 600, color: C.text, margin: "0 2px" }}>1</span>
             <span style={{ cursor: "pointer", userSelect: "none" }}>&gt;</span>
-            <span style={{ marginLeft: 8, border: "1px solid #d9d9d9", borderRadius: 4, padding: "2px 8px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 3 }}>
-              10 / page<svg width="8" height="8" viewBox="0 0 8 8" style={{ marginLeft: 2 }}><polyline points="2,3 4,5.5 6,3" fill="none" stroke="rgba(0,0,0,0.25)" strokeWidth="1.2"/></svg>
+            <span style={{ marginLeft: 8, border: `1px solid ${C.borderMed}`, borderRadius: 4, padding: "2px 8px", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 3 }}>
+              10 / page<svg width="8" height="8" viewBox="0 0 8 8" style={{ marginLeft: 2 }}><polyline points="2,3 4,5.5 6,3" fill="none" stroke={C.textMuted} strokeWidth="1.2"/></svg>
             </span>
           </div>
         </div>
 
-        {/* ── Divider ── */}
-        <hr style={{ border: "none", borderTop: "1px solid #e8e8e8", margin: "0 0 0" }} />
-
-        {/* ── Table header (rfqPlanCardHeader from app2.jsx) ── */}
+        {/* ── Layer 2: Table header (separate card) ── */}
         <div style={{
           display: "grid",
-          gridTemplateColumns: "16% 13% 7% 9% 10% 9% 8% 28%",
-          padding: "8px 16px", background: "#f5f0eb", borderBottom: "1px solid #e8e8e8",
+          gridTemplateColumns: "14% 12% 7% 8% 8% 8% 7% 36%",
+          padding: "8px 16px", background: C.headerBg,
+          marginBottom: 6,
         }}>
-          <span style={{ fontSize: 12, color: "#8a7d72" }}>Plan Name</span>
-          <span style={{ fontSize: 12, color: "#8a7d72" }}>Quotation Period</span>
-          <span style={{ fontSize: 12, color: "#8a7d72", textAlign: "center" }}>Status</span>
-          <span style={{ fontSize: 12, color: "#8a7d72" }}>Current Round</span>
-          <span style={{ fontSize: 12, color: "#8a7d72", textAlign: "center" }}>Total Line Items</span>
-          <span style={{ fontSize: 12, color: "#8a7d72", textAlign: "center" }}>Response Rate</span>
-          <span style={{ fontSize: 12, color: "#8a7d72", textAlign: "center" }}>Amendments</span>
+          <span style={{ fontSize: 12, color: C.textLight }}>Plan Name</span>
+          <span style={{ fontSize: 12, color: C.textLight }}>Quotation Period</span>
+          <span style={{ fontSize: 12, color: C.textLight, textAlign: "center" }}>Status</span>
+          <span style={{ fontSize: 12, color: C.textLight }}>Current Round</span>
+          <span style={{ fontSize: 12, color: C.textLight, textAlign: "center" }}>Total Line Items</span>
+          <span style={{ fontSize: 12, color: C.textLight, textAlign: "center" }}>Response Rate</span>
+          <span style={{ fontSize: 12, color: C.textLight, textAlign: "center" }}>Amendments</span>
           <span></span>
         </div>
 
-        {/* ── Rows (rfqPlanCard from app2.jsx) ── */}
+        {/* ── Layer 3: Each row is a separate white card ── */}
         {rows.map((r) => (
           <div key={r.id}
             onMouseEnter={(e) => e.currentTarget.style.background = "#fafafa"}
-            onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+            onMouseLeave={(e) => e.currentTarget.style.background = C.white}
             style={{
               display: "grid",
-              gridTemplateColumns: "16% 13% 7% 9% 10% 9% 8% 28%",
-              padding: "16px 16px", borderBottom: "1px solid #f0f0f0",
+              gridTemplateColumns: "14% 12% 7% 8% 8% 8% 7% 36%",
+              padding: "10px 16px", marginBottom: 6,
+              background: C.white, borderRadius: 4,
               alignItems: "center", position: "relative",
             }}
           >
             {/* Plan Name */}
             <div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(0,0,0,0.85)", marginBottom: 2, lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.name}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 2, lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.name}</div>
               <div style={{ display: "grid" }}>
-                <small style={{ fontSize: 11, color: "rgba(0,0,0,0.45)", display: "flex", alignItems: "center", gap: 2 }}>
-                  {r.mode && <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="rgba(0,0,0,0.25)" strokeWidth="1"><rect x="1" y="3.5" width="12" height="8" rx="1"/><line x1="4" y1="3.5" x2="4" y2="11.5"/><line x1="7" y1="3.5" x2="7" y2="11.5"/><line x1="10" y1="3.5" x2="10" y2="11.5"/></svg>}
+                <small style={{ fontSize: 11, color: C.textMuted, display: "flex", alignItems: "center", gap: 2 }}>
+                  {r.mode && <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke={C.textMuted} strokeWidth="1"><rect x="1" y="3.5" width="12" height="8" rx="1"/><line x1="4" y1="3.5" x2="4" y2="11.5"/><line x1="7" y1="3.5" x2="7" y2="11.5"/><line x1="10" y1="3.5" x2="10" y2="11.5"/></svg>}
                   <span>{r.tags}</span>
                 </small>
               </div>
@@ -334,8 +362,8 @@ export default function App() {
 
             {/* Quotation Period */}
             <div>
-              <div style={{ fontSize: 13, fontWeight: r.period !== "-" ? 700 : 400, color: "rgba(0,0,0,0.85)" }}>{r.period}</div>
-              <small style={{ fontSize: 11, color: "rgba(0,0,0,0.45)" }}>{r.dates}</small>
+              <div style={{ fontSize: 13, fontWeight: r.period !== "-" ? 700 : 400, color: C.text }}>{r.period}</div>
+              <small style={{ fontSize: 11, color: C.textMuted }}>{r.dates}</small>
             </div>
 
             {/* Status */}
@@ -343,12 +371,12 @@ export default function App() {
 
             {/* Current Round */}
             <div>
-              <div style={{ fontWeight: 700, color: "rgba(0,0,0,0.85)" }}>{r.round}</div>
-              {r.roundDate && <small style={{ fontSize: 11, color: "rgba(0,0,0,0.45)" }}>{r.roundDate}</small>}
+              <div style={{ fontWeight: 700, color: C.text }}>{r.round}</div>
+              {r.roundDate && <small style={{ fontSize: 11, color: C.textMuted }}>{r.roundDate}</small>}
             </div>
 
             {/* Total Line Items */}
-            <div style={{ textAlign: "center", fontSize: 16, fontWeight: 700, color: "rgba(0,0,0,0.85)" }}>{r.items}</div>
+            <div style={{ textAlign: "center", fontSize: 16, fontWeight: 700, color: C.text }}>{r.items}</div>
 
             {/* Response Rate */}
             <div style={{ textAlign: "center", fontSize: 14 }}>
@@ -369,8 +397,8 @@ export default function App() {
               {r.progress !== undefined && (
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <div style={{ flex: 1, height: 8, borderRadius: 0, overflow: "hidden", display: "flex" }}>
-                    <div style={{ width: `${r.progress * 100}%`, background: r.pColor || "#52c41a" }} />
-                    {r.progress < 1 && <div style={{ width: `${(1 - r.progress) * 100}%`, background: "#ff4d4f" }} />}
+                    <div style={{ width: `${r.progress * 100}%`, background: C.barConfirmed }} />
+                    {r.progress < 1 && <div style={{ width: `${(1 - r.progress) * 100}%`, background: C.barRfqNotSent }} />}
                   </div>
                 </div>
               )}
@@ -380,40 +408,59 @@ export default function App() {
 
               {/* Stepper: line_items state */}
               {r.stepper === "line_items" && (
-                <div style={{ display: "flex", alignItems: "flex-start", fontSize: 12 }}>
-                  <div style={{ textAlign: "center", whiteSpace: "nowrap", flexShrink: 0 }}>
-                    <div style={{ color: "#52c41a", display: "flex", alignItems: "center", gap: 3 }}><StepCheck /> Plan Created</div>
-                    <div style={{ color: "#1890FF", fontSize: 10, cursor: "pointer", marginTop: 1 }}>Edit RFQ Plan</div>
+                <div style={{ fontSize: 12 }}>
+                  {/* Row 1: circles + lines — all vertically centered */}
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, whiteSpace: "nowrap", flexShrink: 0, color: C.textDark, fontWeight: 500 }}>
+                      <StepCheck /> Plan Created
+                    </div>
+                    <div style={{ flex: 1, height: 2, background: "#46B774", margin: "0 10px", minWidth: 30 }} />
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, whiteSpace: "nowrap", flexShrink: 0, color: C.textDark, fontWeight: 500 }}>
+                      <StepCheck /> <strong style={{ fontSize: 14 }}>{r.stepItems}</strong> Line Items Added
+                    </div>
+                    <div style={{ flex: 1, height: 2, background: C.border, margin: "0 10px", minWidth: 30 }} />
+                    <div onClick={(e) => { e.stopPropagation(); setSendRfqTarget(r.id); }}
+                      style={{ display: "flex", alignItems: "center", gap: 4, whiteSpace: "nowrap", cursor: "pointer", color: C.textDark, fontWeight: 500, flexShrink: 0 }}>
+                      <StepEmpty color="#1890FF" /> Send RFQ
+                    </div>
                   </div>
-                  <div style={{ flex: 1, height: 2, background: "#52c41a", alignSelf: "center", margin: "0 6px", minWidth: 20 }} />
-                  <div style={{ textAlign: "center", whiteSpace: "nowrap", flexShrink: 0 }}>
-                    <div style={{ color: "#52c41a", display: "flex", alignItems: "center", gap: 3 }}><StepCheck /> <strong>{r.stepItems}</strong> Line Items Added</div>
-                    <div onClick={(e) => { e.stopPropagation(); setViewItemsTarget(r.id); }}
-                      style={{ color: "#1890FF", fontSize: 10, cursor: "pointer", marginTop: 1 }}>View Line Items</div>
-                  </div>
-                  <div style={{ flex: 1, height: 2, background: "#e8e8e8", alignSelf: "center", margin: "0 6px", minWidth: 20 }} />
-                  <div onClick={(e) => { e.stopPropagation(); setSendRfqTarget(r.id); }}
-                    style={{ display: "flex", alignItems: "center", gap: 3, whiteSpace: "nowrap", cursor: "pointer", color: "rgba(0,0,0,0.45)", flexShrink: 0 }}>
-                    <StepEmpty color="#1890FF" /> Send RFQ
+                  {/* Row 2: links below respective steps */}
+                  <div style={{ display: "flex", alignItems: "center", marginTop: 2 }}>
+                    <div style={{ flexShrink: 0, paddingLeft: 22 }}>
+                      <span style={{ color: C.primaryDark, fontSize: 11, cursor: "pointer", textDecoration: "underline" }}>Edit RFQ Plan</span>
+                    </div>
+                    <div style={{ flex: 1, minWidth: 20 }} />
+                    <div style={{ flexShrink: 0, paddingLeft: 22 }}>
+                      <span onClick={(e) => { e.stopPropagation(); setViewItemsTarget(r.id); }}
+                        style={{ color: C.primaryDark, fontSize: 11, cursor: "pointer", textDecoration: "underline" }}>View Line Items</span>
+                    </div>
+                    <div style={{ flex: 1, minWidth: 20 }} />
+                    <div style={{ flexShrink: 0, width: 90 }} />
                   </div>
                 </div>
               )}
 
               {/* Stepper: plan_created state */}
               {r.stepper === "plan_created" && (
-                <div style={{ display: "flex", alignItems: "flex-start", fontSize: 12 }}>
-                  <div style={{ textAlign: "center", whiteSpace: "nowrap", flexShrink: 0 }}>
-                    <div style={{ color: "#52c41a", display: "flex", alignItems: "center", gap: 3 }}><StepCheck /> Plan Created</div>
-                    <div style={{ color: "#1890FF", fontSize: 10, cursor: "pointer", marginTop: 1 }}>Edit RFQ Plan</div>
+                <div style={{ fontSize: 12 }}>
+                  {/* Row 1: circles + lines — all vertically centered */}
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, whiteSpace: "nowrap", flexShrink: 0, color: C.textDark, fontWeight: 500 }}>
+                      <StepCheck /> Plan Created
+                    </div>
+                    <div style={{ flex: 1, height: 2, background: C.border, margin: "0 10px", minWidth: 30 }} />
+                    <div onClick={(e) => { e.stopPropagation(); setLineItemTarget(r.id); }}
+                      style={{ display: "flex", alignItems: "center", gap: 4, whiteSpace: "nowrap", cursor: "pointer", color: C.primaryDark, fontWeight: 600, flexShrink: 0 }}>
+                      <StepEmpty color="#46B774" /> + <span style={{ textDecoration: "underline" }}>Add Line Items</span>
+                    </div>
+                    <div style={{ flex: 1, height: 2, background: C.border, margin: "0 10px", minWidth: 30 }} />
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, whiteSpace: "nowrap", color: C.textMuted, fontWeight: 500, flexShrink: 0 }}>
+                      <StepEmpty /> Send RFQ
+                    </div>
                   </div>
-                  <div style={{ flex: 1, height: 2, background: "#e8e8e8", alignSelf: "center", margin: "0 6px", minWidth: 20 }} />
-                  <div onClick={(e) => { e.stopPropagation(); setLineItemTarget(r.id); }}
-                    style={{ display: "flex", alignItems: "center", gap: 3, whiteSpace: "nowrap", cursor: "pointer", color: "#1890FF", fontWeight: 500, flexShrink: 0 }}>
-                    <StepEmpty color="#52c41a" /> + <span style={{ textDecoration: "underline" }}>Add Line Items</span>
-                  </div>
-                  <div style={{ flex: 1, height: 2, background: "#e8e8e8", alignSelf: "center", margin: "0 6px", minWidth: 20 }} />
-                  <div style={{ display: "flex", alignItems: "center", gap: 3, whiteSpace: "nowrap", color: "rgba(0,0,0,0.25)", flexShrink: 0 }}>
-                    <StepEmpty /> Send RFQ
+                  {/* Row 2: link below first step */}
+                  <div style={{ paddingLeft: 22, marginTop: 2 }}>
+                    <span style={{ color: C.primaryDark, fontSize: 11, cursor: "pointer", textDecoration: "underline" }}>Edit RFQ Plan</span>
                   </div>
                 </div>
               )}
@@ -422,7 +469,10 @@ export default function App() {
         ))}
       </div>
 
-      {/* ───── PANELS ───── */}
+      </>
+      )}
+
+      {/* ───── PANELS (overlays, work on top of either view) ───── */}
       {showCreate && (
         <CreateTender onClose={() => setShowCreate(false)} onSubmit={handleCreateSubmit} />
       )}
@@ -432,15 +482,6 @@ export default function App() {
           tender={targetRow(lineItemTarget)}
           onClose={() => setLineItemTarget(null)}
           onSave={handleLineItemSave}
-        />
-      )}
-
-      {viewItemsTarget && targetRow(viewItemsTarget) && (
-        <ViewLineItems
-          tender={targetRow(viewItemsTarget)}
-          lineItems={targetRow(viewItemsTarget).lineItems || []}
-          onClose={() => setViewItemsTarget(null)}
-          onSendRfq={() => setSendRfqTarget(viewItemsTarget)}
         />
       )}
 

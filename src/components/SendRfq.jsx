@@ -69,7 +69,7 @@ export default function SendRfq({ tender, lineItems, onClose, onSend }) {
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: C.overlay, zIndex: 500, animation: "fadeIn .2s ease-out" }} />
       <div style={{
-        position: "fixed", top: 0, right: 0, bottom: 0, width: 420,
+        position: "fixed", top: 0, right: 0, bottom: 0, width: 520,
         background: C.white, zIndex: 600,
         boxShadow: "-4px 0 24px rgba(0,0,0,0.12)",
         animation: "slideIn .3s ease-out",
@@ -82,7 +82,7 @@ export default function SendRfq({ tender, lineItems, onClose, onSend }) {
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <CloseIcon onClick={onClose} />
-            <span style={{ fontSize: 20, fontWeight: 700, color: C.text }}>Send RFQ</span>
+            <span style={{ fontSize: 20, fontWeight: 600, color: C.text }}>Send RFQ</span>
           </div>
           <button onClick={handleSend} style={{
             padding: "9px 28px", borderRadius: 6, border: "none",

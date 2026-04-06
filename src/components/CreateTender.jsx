@@ -112,7 +112,7 @@ export default function CreateTender({ onClose, onSubmit }) {
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <CloseIcon onClick={onClose} />
-            <span style={{ fontSize: 20, fontWeight: 700, color: C.text }}>Create Tender</span>
+            <span style={{ fontSize: 20, fontWeight: 600, color: C.text }}>Create Tender</span>
           </div>
           <button onClick={handleSubmit} style={{
             padding: "9px 28px", borderRadius: 6, border: "none",

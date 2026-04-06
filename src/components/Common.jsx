@@ -21,14 +21,14 @@ export const GridIcon = () => (
 );
 
 export const SearchIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#666" strokeWidth="1.5">
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#888" strokeWidth="1.5">
     <circle cx="9" cy="9" r="6" />
     <line x1="13.5" y1="13.5" x2="18" y2="18" />
   </svg>
 );
 
 export const FilterIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#666" strokeWidth="1.2">
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#888" strokeWidth="1.2">
     <line x1="2" y1="4" x2="12" y2="4" />
     <line x1="4" y1="7" x2="10" y2="7" />
     <line x1="6" y1="10" x2="8" y2="10" />
@@ -36,14 +36,14 @@ export const FilterIcon = () => (
 );
 
 export const CloseIcon = ({ onClick }) => (
-  <svg onClick={onClick} width="22" height="22" viewBox="0 0 22 22" style={{ cursor: "pointer" }} stroke="#666" strokeWidth="2" fill="none">
+  <svg onClick={onClick} width="22" height="22" viewBox="0 0 22 22" style={{ cursor: "pointer" }} stroke="#888" strokeWidth="2" fill="none">
     <line x1="5" y1="5" x2="17" y2="17" />
     <line x1="17" y1="5" x2="5" y2="17" />
   </svg>
 );
 
 export const UploadIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 14 14" stroke="#666" strokeWidth="1.5" fill="none">
+  <svg width="14" height="14" viewBox="0 0 14 14" stroke="#888" strokeWidth="1.5" fill="none">
     <line x1="7" y1="2" x2="7" y2="12" />
     <polyline points="3,6 7,2 11,6" />
   </svg>
@@ -69,17 +69,17 @@ export const BackIcon = () => (
 
 export function StepCheck() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16">
-      <circle cx="8" cy="8" r="7" fill="#e8f5e9" stroke={C.liveGreen} strokeWidth="1.5" />
-      <polyline points="5,8 7,10 11,6" fill="none" stroke={C.liveGreen} strokeWidth="1.5" />
+    <svg width="18" height="18" viewBox="0 0 18 18">
+      <circle cx="9" cy="9" r="8.5" fill="#46B774" />
+      <polyline points="5.5,9 8,11.5 12.5,6.5" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
 export function StepEmpty({ color = "#ccc" }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16">
-      <circle cx="8" cy="8" r="7" fill="#f5f5f5" stroke={color} strokeWidth="1.5" />
+    <svg width="18" height="18" viewBox="0 0 18 18">
+      <circle cx="9" cy="9" r="8.5" fill={color} />
     </svg>
   );
 }
@@ -287,19 +287,22 @@ export function TextArea({ label, required, placeholder, value, onChange }) {
 /* ─── StatusBadge ─── */
 
 export function StatusBadge({ status }) {
+  /* Status badge uses filled circle-style per spec — bg color only, dark text */
   const m = {
-    LIVE: { bg: C.liveBg, color: C.liveGreen, border: C.liveGreen },
-    DELAYED: { bg: C.delayedBg, color: C.delayedRed, border: C.delayedRed },
-    "ON TIME": { bg: "#e8f5e9", color: "#2e7d32", border: "#2e7d32" },
-    CLOSED: { bg: C.closedBg, color: C.closedGray, border: C.closedGray },
-    OPEN: { bg: "#e3f2fd", color: C.primary, border: C.primary },
+    LIVE: { bg: C.statusLive },
+    DELAYED: { bg: C.statusDelayed },
+    "ON TIME": { bg: "#e8f5e9" },
+    CLOSED: { bg: C.statusClosed },
+    OPEN: { bg: C.statusOpen },
+    FINALISED: { bg: C.statusFinalised },
+    CONFIRMED: { bg: C.statusConfirmed },
   };
   const s = m[status] || m.CLOSED;
   return (
     <span style={{
-      display: "inline-block", padding: "3px 14px", borderRadius: 14,
-      fontSize: 11.5, fontWeight: 600, letterSpacing: 0.5,
-      background: s.bg, color: s.color, border: `1px solid ${s.border}`,
+      display: "inline-block", padding: "3px 14px", borderRadius: 8,
+      fontSize: 12, fontWeight: 600, letterSpacing: 0.3,
+      background: s.bg, color: "#111111",
     }}>{status}</span>
   );
 }
