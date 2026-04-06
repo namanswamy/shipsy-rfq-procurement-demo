@@ -187,7 +187,7 @@ export default function CreateTender({ onClose, onSubmit }) {
                   options={["Petchem", "Jio", "Retail", "O2C", "New Energy"]}
                   open={dd.businessUnit} onToggle={tog("businessUnit")} onChange={set("businessUnit")} />
                 <Dropdown label="Sub Business Unit" value={form.subBusinessUnit} placeholder="Select Sub Business ..."
-                  options={["Sub Unit A", "Sub Unit B", "Sub Unit C"]}
+                  options={["RBL", "JPL", "RJIL", "RPPMSL", "CAPEX", "DIGITAL", "UL", "GROCERY", "OTHER"]}
                   open={dd.subBusinessUnit} onToggle={tog("subBusinessUnit")} onChange={set("subBusinessUnit")} />
               </div>
 
