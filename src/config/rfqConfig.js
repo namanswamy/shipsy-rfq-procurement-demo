@@ -41,7 +41,7 @@ export function getSubTypes(vendorType, mode, type) {
     "Freight Forwarder": {
       FCL: {
         Export: ["Liquid Shipment", "Solid Shipment"],
-        Import: ["Ocean Freight", "Freight Management"],
+        Import: ["Freight Management"],
       },
     },
     "Shipping Line": {
