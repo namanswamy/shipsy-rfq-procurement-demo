@@ -230,7 +230,7 @@ export const LINE_ITEM_FIELDS = {
       {
         title: "Line Item Details",
         fields: [
-          { key: "podGroups", label: "POD Group", type: "multiselect", required: true, options: ["West Coast Group", "East Coast Group", "South India Group", "North India Group", "Central India Group"] },
+          { key: "podGroups", label: "POD Group", type: "multiselect", required: true, options: ["Mumbai Group", "Gujarat Group", "ROI Group"] },
         ],
       },
     ],
