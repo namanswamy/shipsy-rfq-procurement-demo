@@ -418,11 +418,15 @@ export function generateLineItems(vendorType, formData) {
 
 /* Document categories */
 export const DOCUMENT_CATEGORIES = [
-  "Rate Sheet",
-  "Terms & Conditions",
-  "Scope of Work",
-  "Supporting Document",
+  "MSDS Certificates",
+  "Packing List",
+  "Custom Invoice",
+  "Insurance Copy",
+  "Pickup Request Form",
+  "Custom Invoice/PL",
   "Other",
+  "IIP/UN Certificate",
+  "TNC",
 ];
 
 /* Vendor type short codes for chips */

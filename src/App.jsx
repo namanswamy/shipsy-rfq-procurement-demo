@@ -224,9 +224,9 @@ export default function App() {
         {/* Sort By */}
         <span style={{ fontSize: 13, color: C.textMuted, fontWeight: 400, marginRight: 8 }}>Sort By</span>
         <div style={{
-          display: "inline-flex", alignItems: "center", justifyContent: "space-between",
-          padding: "0 16px", borderRadius: 999, border: "1px solid #d9d9d9",
-          fontSize: 13, color: "rgba(0,0,0,0.25)", cursor: "pointer", height: 30, minWidth: 120,
+          display: "inline-flex ", alignItems: "center", justifyContent: "space-between",
+          padding: "0 11px", borderRadius: 4, border: "1px solid #d9d9d9",
+          fontSize: 13, color: "rgba(0,0,0,0.25)", cursor: "pointer", height: 30, minWidth: 110,
         }}>
           <span>Select</span>
           <svg width="10" height="10" viewBox="0 0 10 10"><polyline points="3,4 5,6 7,4" fill="none" stroke="rgba(0,0,0,0.25)" strokeWidth="1.5"/></svg>
