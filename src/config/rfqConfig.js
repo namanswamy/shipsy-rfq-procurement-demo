@@ -52,7 +52,7 @@ export function getSubTypes(vendorType, mode, type) {
     },
     CHA: {
       _noMode: {
-        Import: ["General Cargo", "New Energy"],
+        Import: ["Other Business", "New Energy"],
       },
     },
     Surveyor: {
