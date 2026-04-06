@@ -16,16 +16,7 @@ export default function CreateTender({ onClose, onSubmit }) {
   const [tncRows, setTncRows] = useState([]);
   const [tncOpen, setTncOpen] = useState(false);
 
-  // Toggle dropdown — closes all others first, then opens the target
-  const tog = useCallback((key) => (val) => {
-    setDd((p) => {
-      const next = {};
-      // close all others
-      Object.keys(p).forEach((k) => { next[k] = false; });
-      next[key] = val;
-      return next;
-    });
-  }, []);
+  const tog = useCallback((key) => (val) => setDd((p) => ({ ...p, [key]: val })), []);
 
   const set = (key) => (val) => {
     setForm((p) => {
