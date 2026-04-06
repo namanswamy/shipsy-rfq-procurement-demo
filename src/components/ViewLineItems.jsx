@@ -86,7 +86,7 @@ export default function ViewLineItems({ tender, lineItems, onClose, onSendRfq, o
         <div style={{ display: "flex", alignItems: "center" }}>
 
           {/* ── LEFT FIXED: Checkbox + Port + LITM + Badge ── */}
-          <div style={{ width: 340, flexShrink: 0, display: "flex", alignItems: "flex-start", gap: 10, padding: "0 12px" }}>
+          <div style={{ width: isExport ? 400 : 340, flexShrink: 0, display: "flex", alignItems: "flex-start", gap: 10, padding: "0 12px" }}>
             {/* Checkbox */}
             <div onClick={() => toggleCheck(item.id)} style={{
               width: 16, height: 16, borderRadius: 3, flexShrink: 0, cursor: "pointer", marginTop: 4,
@@ -157,7 +157,7 @@ export default function ViewLineItems({ tender, lineItems, onClose, onSendRfq, o
           <div style={{ width: 1, height: 44, background: C.borderLight, flexShrink: 0 }} />
 
           {/* ── VENDOR — fixed width ── */}
-          <div style={{ width: 130, flexShrink: 0, padding: "0 10px" }}>
+          <div style={{ width: isExport ? 110 : 130, flexShrink: 0, padding: "0 8px" }}>
             <div style={{
               fontSize: 14, fontWeight: 600, color: C.text,
               overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
