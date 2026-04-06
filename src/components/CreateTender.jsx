@@ -89,7 +89,7 @@ export default function CreateTender({ onClose, onSubmit }) {
         position: "fixed", inset: 0, background: C.overlay, zIndex: 500,
         animation: "fadeIn .2s ease-out",
       }} />
-      <div onClick={() => setOpenDd(null)} style={{
+      <div style={{
         position: "fixed", top: 0, right: 0, bottom: 0, width: 640,
         background: C.white, zIndex: 600,
         boxShadow: "-4px 0 24px rgba(0,0,0,0.12)",
@@ -114,7 +114,7 @@ export default function CreateTender({ onClose, onSubmit }) {
         </div>
 
         {/* Scrollable body */}
-        <div style={{ flex: 1, overflow: "auto", padding: 24 }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ flex: 1, overflow: "auto", padding: 24 }}>
 
           {/* ── Row 1: Vendor Type | Mode ── */}
           <div style={{ display: "grid", gridTemplateColumns: vendorType && modeOptions ? "1fr 1fr" : "1fr", gap: 18, marginBottom: 22 }}>
