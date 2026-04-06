@@ -15,7 +15,7 @@ export const VENDOR_TYPES = [
 
 export const MODES = {
   "Freight Forwarder": ["FCL", "LCL", "Air", "BB"],
-  "Shipping Line": ["FCL", "LCL", "Air", "BB"],
+  "Shipping Line": ["FCL", "LCL", "BB"],
   CHA: null,
   CFS: null,
   ICD: null,
