@@ -10,15 +10,21 @@ import {
 } from "./Common";
 
 export default function CreateTender({ onClose, onSubmit }) {
-  const [openDd, setOpenDd] = useState(null); // only ONE dropdown open at a time
+  const [dd, setDd] = useState({});
   const [form, setForm] = useState({});
   const [docRows, setDocRows] = useState([{ id: 1, category: "", file: null }]);
   const [tncRows, setTncRows] = useState([]);
   const [tncOpen, setTncOpen] = useState(false);
 
-  // Toggle dropdown — closes any other open dropdown
+  // Toggle dropdown — closes all others first, then opens the target
   const tog = useCallback((key) => (val) => {
-    setOpenDd(val ? key : null);
+    setDd((p) => {
+      const next = {};
+      // close all others
+      Object.keys(p).forEach((k) => { next[k] = false; });
+      next[key] = val;
+      return next;
+    });
   }, []);
 
   const set = (key) => (val) => {
@@ -120,12 +126,12 @@ export default function CreateTender({ onClose, onSubmit }) {
           <div style={{ display: "grid", gridTemplateColumns: vendorType && modeOptions ? "1fr 1fr" : "1fr", gap: 18, marginBottom: 22 }}>
             <Dropdown label="Vendor Type" required value={form.vendorType}
               placeholder="Select Vendor Type" options={VENDOR_TYPES}
-              open={openDd === "vendorType"} onToggle={tog("vendorType")} onChange={set("vendorType")} />
+              open={dd.vendorType} onToggle={tog("vendorType")} onChange={set("vendorType")} />
             {vendorType && modeOptions && (
               <div style={{ animation: "fadeSlideIn 0.2s ease-out" }}>
                 <Dropdown label="Mode" required value={form.mode}
                   placeholder="Select Mode" options={modeOptions}
-                  open={openDd === "mode"} onToggle={tog("mode")} onChange={set("mode")} />
+                  open={dd.mode} onToggle={tog("mode")} onChange={set("mode")} />
               </div>
             )}
           </div>
@@ -139,12 +145,12 @@ export default function CreateTender({ onClose, onSubmit }) {
             }}>
               <Dropdown label="Type" required value={form.type}
                 placeholder="Select Type" options={typeOptions}
-                open={openDd === "type"} onToggle={tog("type")} onChange={set("type")} />
+                open={dd.type} onToggle={tog("type")} onChange={set("type")} />
               {form.type && subTypeOptions && (
                 <div style={{ animation: "fadeSlideIn 0.2s ease-out" }}>
                   <Dropdown label={subTypeLabel} required value={form.subType}
                     placeholder="Select Sub Type" options={subTypeOptions}
-                    open={openDd === "subType"} onToggle={tog("subType")} onChange={set("subType")} />
+                    open={dd.subType} onToggle={tog("subType")} onChange={set("subType")} />
                 </div>
               )}
             </div>
@@ -155,7 +161,7 @@ export default function CreateTender({ onClose, onSubmit }) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, marginBottom: 22, animation: "fadeSlideIn 0.2s ease-out" }}>
               <Dropdown label="Segment" required value={form.segment}
                 placeholder="Select Segment" options={segmentOptions}
-                open={openDd === "segment"} onToggle={tog("segment")} onChange={set("segment")} />
+                open={dd.segment} onToggle={tog("segment")} onChange={set("segment")} />
               <div />
             </div>
           )}
@@ -191,17 +197,17 @@ export default function CreateTender({ onClose, onSubmit }) {
                 <TextInput label="RFQ Name" required value={form.rfqName} onChange={set("rfqName")} placeholder="Enter Name" />
                 <Dropdown label="RFQ Type" required value={form.rfqType}
                   placeholder="Select RFQ Type" options={rfqTypeOptions}
-                  open={openDd === "rfqType"} onToggle={tog("rfqType")} onChange={set("rfqType")} />
+                  open={dd.rfqType} onToggle={tog("rfqType")} onChange={set("rfqType")} />
               </div>
 
               {/* Business Unit | Sub Business Unit */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, marginBottom: 22 }}>
                 <Dropdown label="Business Unit" value={form.businessUnit} placeholder="Select Business Unit"
                   options={["Petchem", "Jio", "Retail", "O2C", "New Energy"]}
-                  open={openDd === "businessUnit"} onToggle={tog("businessUnit")} onChange={set("businessUnit")} />
+                  open={dd.businessUnit} onToggle={tog("businessUnit")} onChange={set("businessUnit")} />
                 <Dropdown label="Sub Business Unit" value={form.subBusinessUnit} placeholder="Select Sub Business ..."
                   options={["RBL", "JPL", "RJIL", "RPPMSL", "CAPEX", "DIGITAL", "UL", "GROCERY", "OTHER"]}
-                  open={openDd === "subBusinessUnit"} onToggle={tog("subBusinessUnit")} onChange={set("subBusinessUnit")} />
+                  open={dd.subBusinessUnit} onToggle={tog("subBusinessUnit")} onChange={set("subBusinessUnit")} />
               </div>
 
               {/* Insurance (FF / SL only) */}
@@ -209,7 +215,7 @@ export default function CreateTender({ onClose, onSubmit }) {
                 <div style={{ marginBottom: 22, maxWidth: 280 }}>
                   <Dropdown label="Insurance Required" required value={form.insurance} placeholder="Insurance Required"
                     options={["Yes", "No"]}
-                    open={openDd === "insurance"} onToggle={tog("insurance")} onChange={set("insurance")} />
+                    open={dd.insurance} onToggle={tog("insurance")} onChange={set("insurance")} />
                 </div>
               )}
 
@@ -220,7 +226,7 @@ export default function CreateTender({ onClose, onSubmit }) {
                   <div key={row.id} style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 8 }}>
                     <Dropdown value={row.category} placeholder="Select Attac..."
                       options={DOCUMENT_CATEGORIES} width={180}
-                      open={openDd === `doc_${row.id}`} onToggle={tog(`doc_${row.id}`)}
+                      open={dd[`doc_${row.id}`]} onToggle={tog(`doc_${row.id}`)}
                       onChange={(val) => setDocCategory(row.id, val)} />
                     <button style={{
                       height: 38, padding: "0 16px", borderRadius: 6,
