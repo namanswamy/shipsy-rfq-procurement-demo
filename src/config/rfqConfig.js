@@ -11,6 +11,7 @@ export const VENDOR_TYPES = [
   "Break Bulk Vendor",
   "Surveyor",
   "Transporter",
+  "Inter Carting",
 ];
 
 export const MODES = {
@@ -22,6 +23,7 @@ export const MODES = {
   "Break Bulk Vendor": null,
   Surveyor: null,
   Transporter: null,
+  "Inter Carting": null,
 };
 
 export const TYPES = {
@@ -33,6 +35,7 @@ export const TYPES = {
   "Break Bulk Vendor": ["Export", "Import"],
   Surveyor: ["Export", "Import"],
   Transporter: null,
+  "Inter Carting": null,
 };
 
 /* Sub Type options keyed by vendorType -> mode -> type */
@@ -352,6 +355,7 @@ export const LINE_ITEM_FIELDS = {
   },
 
   Transporter: null,
+  "Inter Carting": null,
 };
 
 /* Generate line items from combo fields */
@@ -482,4 +486,5 @@ export const VENDOR_CHIP = {
   "Break Bulk Vendor": "BB",
   Surveyor: "SUR",
   Transporter: "TRP",
+  "Inter Carting": "IC",
 };

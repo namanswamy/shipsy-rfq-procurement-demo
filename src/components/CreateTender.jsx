@@ -68,7 +68,7 @@ export default function CreateTender({ onClose, onSubmit }) {
 
   const mainFieldsComplete = (() => {
     if (!vendorType) return false;
-    if (vendorType === "Transporter") return false;
+    if (vendorType === "Transporter" || vendorType === "Inter Carting") return false;
     if (modeOptions && !form.mode) return false;
     if (typeOptions && !form.type) return false;
     if (subTypeOptions && !form.subType) return false;
@@ -345,7 +345,7 @@ export default function CreateTender({ onClose, onSubmit }) {
           )}
 
           {/* Transporter message */}
-          {vendorType === "Transporter" && (
+          {(vendorType === "Transporter" || vendorType === "Inter Carting") && (
             <div style={{
               padding: 24, background: "#fff8e1", borderRadius: 8,
               border: "1px solid #ffe082", marginTop: 12,
