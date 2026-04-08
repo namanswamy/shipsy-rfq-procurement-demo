@@ -15,7 +15,7 @@ export const VENDOR_TYPES = [
 
 export const MODES = {
   "Freight Forwarder": ["FCL", "LCL", "Air", "BB"],
-  "Shipping Line": ["FCL", "LCL", "BB"],
+  "Shipping Line": ["FCL"],
   CHA: null,
   CFS: null,
   ICD: null,
@@ -41,7 +41,7 @@ export function getSubTypes(vendorType, mode, type) {
     "Freight Forwarder": {
       FCL: {
         Export: ["Liquid Shipment", "Solid Shipment"],
-        Import: ["Freight Management"],
+        Import: ["Freight Management", "Freight"],
       },
     },
     "Shipping Line": {
@@ -50,11 +50,7 @@ export function getSubTypes(vendorType, mode, type) {
         Import: ["Ocean Freight", "Local"],
       },
     },
-    CHA: {
-      _noMode: {
-        Import: ["Other Business", "New Energy"],
-      },
-    },
+    CHA: {},
     Surveyor: {
       _noMode: {
         Export: ["Marine Warranty", "Bulk Surveyor"],
@@ -104,7 +100,7 @@ export function showsType(vendorType) {
 /* RFQ Type options — per BRD: Spot for all, Normal for all except BB, COA only for BB */
 export function getRfqTypeOptions(vendorType) {
   if (vendorType === "Break Bulk Vendor") return ["Spot", "COA"];
-  return ["Spot", "Normal"];
+  return ["Spot", "Tender"];
 }
 
 /* Whether Insurance Required is shown */
