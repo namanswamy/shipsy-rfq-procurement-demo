@@ -315,7 +315,7 @@ export default function App() {
         {/* ── Layer 2: Table header (separate card) ── */}
         <div style={{
           display: "grid",
-          gridTemplateColumns: "14% 12% 7% 8% 8% 8% 7% 36%",
+          gridTemplateColumns: "16% 11% 7% 8% 8% 8% 7% 35%",
           padding: "8px 16px", background: C.headerBg,
           marginBottom: 6,
         }}>
@@ -336,7 +336,7 @@ export default function App() {
             onMouseLeave={(e) => e.currentTarget.style.background = C.white}
             style={{
               display: "grid",
-              gridTemplateColumns: "14% 12% 7% 8% 8% 8% 7% 36%",
+              gridTemplateColumns: "16% 11% 7% 8% 8% 8% 7% 35%",
               padding: "10px 16px", marginBottom: 6,
               background: C.white, borderRadius: 4,
               alignItems: "center", position: "relative",
