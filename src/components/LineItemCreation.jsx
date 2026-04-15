@@ -93,13 +93,52 @@ export default function LineItemCreation({ tender, onClose, onSave }) {
       return <FileUpload key={key} label={field.label} required={field.required} />;
     }
 
-    if (field.type === "date" || field.type === "daterange") {
+    if (field.type === "date") {
       return (
-        <TextInput
-          key={key} label={field.label} required={field.required}
-          value={form[key]} placeholder="DD/MM/YYYY"
-          onChange={set(key)} type="text"
-        />
+        <div key={key} style={{ width: "100%" }}>
+          <div style={{ marginBottom: 5 }}>
+            <span style={{ fontSize: 13, fontWeight: 500, color: C.label }}>{field.label}</span>
+            {field.required && <span style={{ color: C.red, marginLeft: 3, fontSize: 13 }}>*</span>}
+          </div>
+          <div style={{
+            display: "flex", alignItems: "center",
+            height: 38, padding: "0 12px", borderRadius: 6,
+            border: `1px solid ${C.border}`, background: C.white,
+          }}>
+            <input type="date" value={form[key] || ""}
+              onChange={(e) => set(key)(e.target.value)}
+              style={{ flex: 1, border: "none", outline: "none", fontSize: 13.5, color: form[key] ? C.text : C.placeholder, background: "transparent", fontFamily: "inherit" }}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    if (field.type === "daterange") {
+      const rangeVal = form[key] || { start: "", end: "" };
+      const updateRange = (k, v) => set(key)({ ...rangeVal, [k]: v });
+      return (
+        <div key={key} style={{ width: "100%" }}>
+          <div style={{ marginBottom: 5 }}>
+            <span style={{ fontSize: 13, fontWeight: 500, color: C.label }}>{field.label}</span>
+            {field.required && <span style={{ color: C.red, marginLeft: 3, fontSize: 13 }}>*</span>}
+          </div>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            <div style={{ flex: 1, height: 38, padding: "0 12px", borderRadius: 6, border: `1px solid ${C.border}`, background: C.white, display: "flex", alignItems: "center" }}>
+              <input type="date" value={rangeVal.start}
+                onChange={(e) => updateRange("start", e.target.value)}
+                style={{ flex: 1, border: "none", outline: "none", fontSize: 13, color: rangeVal.start ? C.text : C.placeholder, background: "transparent", fontFamily: "inherit" }}
+              />
+            </div>
+            <span style={{ color: C.textMuted }}>~</span>
+            <div style={{ flex: 1, height: 38, padding: "0 12px", borderRadius: 6, border: `1px solid ${C.border}`, background: C.white, display: "flex", alignItems: "center" }}>
+              <input type="date" value={rangeVal.end}
+                onChange={(e) => updateRange("end", e.target.value)}
+                style={{ flex: 1, border: "none", outline: "none", fontSize: 13, color: rangeVal.end ? C.text : C.placeholder, background: "transparent", fontFamily: "inherit" }}
+              />
+            </div>
+          </div>
+        </div>
       );
     }
 

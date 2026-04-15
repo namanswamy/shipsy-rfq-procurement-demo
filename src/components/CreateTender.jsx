@@ -177,7 +177,16 @@ export default function CreateTender({ onClose, onSubmit }) {
 
               {/* Preparation Date | Start & End Date */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, marginBottom: 22 }}>
-                <TextInput label="Preparation Date" required value={form.prepDate} onChange={set("prepDate")} placeholder="DD/MM/YYYY" icon={<CalendarIcon />} />
+                <div>
+                  <div style={{ marginBottom: 5 }}>
+                    <span style={{ fontSize: 13, fontWeight: 500, color: C.label }}>Preparation Date</span>
+                    <span style={{ color: C.red, marginLeft: 3, fontSize: 13 }}>*</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", height: 38, padding: "0 12px", borderRadius: 6, border: `1px solid ${C.border}`, background: C.white }}>
+                    <input type="date" value={form.prepDate || ""} onChange={(e) => set("prepDate")(e.target.value)}
+                      style={{ flex: 1, border: "none", outline: "none", fontSize: 13.5, color: form.prepDate ? C.text : C.placeholder, background: "transparent", fontFamily: "inherit" }} />
+                  </div>
+                </div>
                 <div>
                   <div style={{ marginBottom: 5 }}>
                     <span style={{ fontSize: 13, fontWeight: 500, color: C.label }}>Start & End Date</span>
@@ -185,12 +194,11 @@ export default function CreateTender({ onClose, onSubmit }) {
                   </div>
                   <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                     <div style={{ flex: 1, height: 38, padding: "0 12px", borderRadius: 6, border: `1px solid ${C.border}`, background: C.white, display: "flex", alignItems: "center" }}>
-                      <input type="text" value={form.startDate || ""} onChange={(e) => set("startDate")(e.target.value)} placeholder="Start date" style={{ flex: 1, border: "none", outline: "none", fontSize: 13, color: form.startDate ? C.text : C.placeholder, background: "transparent" }} />
+                      <input type="date" value={form.startDate || ""} onChange={(e) => set("startDate")(e.target.value)} style={{ flex: 1, border: "none", outline: "none", fontSize: 13, color: form.startDate ? C.text : C.placeholder, background: "transparent", fontFamily: "inherit" }} />
                     </div>
                     <span style={{ color: C.textMuted }}>~</span>
                     <div style={{ flex: 1, height: 38, padding: "0 12px", borderRadius: 6, border: `1px solid ${C.border}`, background: C.white, display: "flex", alignItems: "center" }}>
-                      <input type="text" value={form.endDate || ""} onChange={(e) => set("endDate")(e.target.value)} placeholder="End date" style={{ flex: 1, border: "none", outline: "none", fontSize: 13, color: form.endDate ? C.text : C.placeholder, background: "transparent" }} />
-                      <CalendarIcon />
+                      <input type="date" value={form.endDate || ""} onChange={(e) => set("endDate")(e.target.value)} style={{ flex: 1, border: "none", outline: "none", fontSize: 13, color: form.endDate ? C.text : C.placeholder, background: "transparent", fontFamily: "inherit" }} />
                     </div>
                   </div>
                 </div>
